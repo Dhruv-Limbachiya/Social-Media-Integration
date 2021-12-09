@@ -7,15 +7,26 @@
     tools:context=".ui.MainActivity">
 
     <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_button"
+        android:id="@+id/fb_login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
         android:layout_marginBottom="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/google_sign_in_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:buttonSize="wide"
+        app:layout_constraintTop_toBottomOf="@id/fb_login_button"
+        app:layout_constraintStart_toStartOf="@id/fb_login_button"
+        app:layout_constraintEnd_toEndOf="@id/fb_login_button"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
