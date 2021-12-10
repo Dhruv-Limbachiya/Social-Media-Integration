@@ -1,6 +1,7 @@
 package com.example.socialmediaintegration.ui
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.socialmediaintegration.databinding.ActivityMainBinding
 import com.example.socialmediaintegration.util.FacebookLoginUtil
 import com.example.socialmediaintegration.util.GoogleSignInUtil
+import com.example.socialmediaintegration.util.TwitterLoginUtil
 import com.facebook.AccessToken
 import com.facebook.AccessTokenTracker
 import com.facebook.FacebookCallback
@@ -19,6 +21,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.twitter.sdk.android.core.Callback
+import com.twitter.sdk.android.core.Result
+import com.twitter.sdk.android.core.TwitterException
+import com.twitter.sdk.android.core.TwitterSession
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,8 +42,16 @@ class MainActivity : AppCompatActivity() {
         setUpFacebookLogin()
 
         setUpGoogleLogin()
+
+        setUpTwitterLogin()
     }
 
+    /**
+     * adds callback to the twitter login button
+     */
+    private fun setUpTwitterLogin() {
+        mBinding.twitterLoginButton.callback = TwitterLoginUtil.callback
+    }
 
 
     /**
@@ -130,8 +144,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        mBinding.twitterLoginButton.onActivityResult(requestCode, resultCode, data)
+    }
+
     companion object {
         const val EMAIL = "email"
-        private const val TAG = "MainActivity"
+        const val TAG = "MainActivity"
     }
 }

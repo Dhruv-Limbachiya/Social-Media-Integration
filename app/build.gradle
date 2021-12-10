@@ -52,4 +52,8 @@ dependencies {
     // Google login dependency
     implementation 'com.google.android.gms:play-services-auth:19.2.0'
 
+    // Twitter login dependency
+    implementation 'com.twitter.sdk.android:twitter-core:3.1.1'
+
+
 }
