@@ -8,8 +8,10 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.socialmediaintegration.databinding.ActivityMainBinding
+import com.example.socialmediaintegration.model.User
 import com.example.socialmediaintegration.util.FacebookLoginUtil
 import com.example.socialmediaintegration.util.GoogleSignInUtil
+import com.example.socialmediaintegration.util.LoginType
 import com.example.socialmediaintegration.util.TwitterLoginUtil
 import com.facebook.AccessToken
 import com.facebook.AccessTokenTracker
@@ -50,7 +52,20 @@ class MainActivity : AppCompatActivity() {
      * adds callback to the twitter login button
      */
     private fun setUpTwitterLogin() {
-        mBinding.twitterLoginButton.callback = TwitterLoginUtil.callback
+        mBinding.twitterLoginButton.callback =  object : Callback<TwitterSession>() {
+            override fun success(result: Result<TwitterSession>?) {
+                result?.data?.let {
+                    TwitterLoginUtil.getTwitterUserDetails(it) {
+                        navigateToProfile(it,LoginType.TWITTER)
+                    }
+                }
+            }
+
+            override fun failure(exception: TwitterException?) {
+                Log.e(TAG, "failure: ${exception?.localizedMessage}",exception )
+            }
+        }
+
     }
 
 
@@ -86,6 +101,7 @@ class MainActivity : AppCompatActivity() {
                 if(FacebookLoginUtil.isUserLoggedIn()) {
                     currentAccessToken?.let {
                         FacebookLoginUtil.getUserInfo(it) { user ->
+                            navigateToProfile(user,LoginType.FACEBOOK)
                             Log.i(TAG, "onCurrentAccessTokenChanged: User name : ${user.fullName}, Email : ${user.email}, Image : ${user.image} , Id : ${user.id}")
                         }
                     }
@@ -137,11 +153,32 @@ class MainActivity : AppCompatActivity() {
                 // The GoogleSignInAccount object contains information about the signed-in user, such as the user's name.
                 val googleSignInAccount = task.getResult(ApiException::class.java)
                 Log.i(TAG, "handleGoogleSignIn: Name : ${googleSignInAccount.displayName}, Email : ${googleSignInAccount.email} , Image : ${googleSignInAccount.photoUrl} ")
-                // TODO : update ui by showing user info or navigate to profile screen.
+                // navigate to profile screen.
+                val user = User(
+                    fullName = googleSignInAccount.displayName,
+                    email = googleSignInAccount.email,
+                    image = googleSignInAccount.photoUrl.toString(),
+                    id = googleSignInAccount.id
+                )
+
+                navigateToProfile(user,LoginType.GOOGLE)
+
             }catch (e: ApiException) {
                 Log.w(TAG, "handleGoogleSignIn: ${e.statusCode}")
             }
         }
+    }
+
+
+    /**
+     * Navigate to profile screen with profile details.
+     */
+    private fun navigateToProfile(user: User, loginType: LoginType) {
+        val intent = Intent(this@MainActivity, ProfileActivity::class.java).apply {
+            putExtra(USER_PROFILE_KEY,user)
+            putExtra(LOGIN_TYPE_KEY,loginType)
+        }
+        startActivity(intent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -152,5 +189,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val EMAIL = "email"
         const val TAG = "MainActivity"
+        const val USER_PROFILE_KEY = "user_profile_key"
+        const val LOGIN_TYPE_KEY = "login_type_key"
     }
 }

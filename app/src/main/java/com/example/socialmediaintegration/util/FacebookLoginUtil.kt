@@ -39,8 +39,7 @@ object FacebookLoginUtil {
                     val name = obj.getString("name")
                     val email = obj.getString("email")
                     val id = obj.getString("id")
-                    val image = "http://graph.facebook.com/$id/picture?type=normal"
-
+                    val image = "https://graph.facebook.com/v2.2/$id/picture?height=120&type=normal"
                     val user = User(
                         name,
                         email,
