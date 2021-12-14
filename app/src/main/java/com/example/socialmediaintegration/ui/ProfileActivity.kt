@@ -10,6 +10,7 @@ import com.example.socialmediaintegration.util.LoginType
 import com.example.socialmediaintegration.util.LoginType.GOOGLE
 import com.example.socialmediaintegration.util.LoginType.TWITTER
 import com.example.socialmediaintegration.util.LoginType.FACEBOOK
+import com.facebook.login.LoginManager
 import com.google.android.material.snackbar.Snackbar
 
 class ProfileActivity : AppCompatActivity() {
@@ -38,7 +39,8 @@ class ProfileActivity : AppCompatActivity() {
                     }
 
                     FACEBOOK.name -> {
-
+                        LoginManager.getInstance().logOut()
+                        finish()
                     }
 
                     TWITTER.name -> {
