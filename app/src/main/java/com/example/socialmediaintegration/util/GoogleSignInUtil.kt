@@ -1,6 +1,8 @@
 package com.example.socialmediaintegration.util
 
 import android.content.Context
+import android.util.Log
+import com.example.socialmediaintegration.ui.MainActivity.Companion.TAG
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
@@ -8,10 +10,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
  * Created By Dhruv Limbachiya on 09-12-2021 11:02 AM.
  */
 object GoogleSignInUtil {
-
-    init {
-
-    }
 
     /**
      * Configure the sign in options for the google sign in client.
@@ -41,5 +39,21 @@ object GoogleSignInUtil {
             return true
         }
         return false
+    }
+
+    /**
+     * Method will sign out the user.
+     */
+    fun signOutFromGoogle(context: Context, onSignOut: (Boolean) -> Unit) {
+        if (isGoogleUserAlreadyLoggedIn(context)) {
+            getGoogleSignInClient(context).signOut()
+                .addOnCompleteListener {
+                    onSignOut(true)
+                }
+                .addOnFailureListener {
+                    onSignOut(false)
+                    Log.e(TAG, "googleSignOut: ${it.localizedMessage}", it )
+                }
+        }
     }
 }

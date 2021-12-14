@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.example.socialmediaintegration.databinding.ActivityMainBinding
 import com.example.socialmediaintegration.model.User
 import com.example.socialmediaintegration.util.FacebookLoginUtil
@@ -48,6 +49,15 @@ class MainActivity : AppCompatActivity() {
         setUpTwitterLogin()
     }
 
+    override fun onStart() {
+        super.onStart()
+        if(GoogleSignInUtil.isGoogleUserAlreadyLoggedIn(this)) {
+            showGoogleLogoutButton()
+        } else {
+            hideGoogleLogoutButton()
+        }
+    }
+
     /**
      * adds callback to the twitter login button
      */
@@ -65,7 +75,6 @@ class MainActivity : AppCompatActivity() {
                 Log.e(TAG, "failure: ${exception?.localizedMessage}",exception )
             }
         }
-
     }
 
 
@@ -122,6 +131,16 @@ class MainActivity : AppCompatActivity() {
         mBinding.googleSignInButton.setOnClickListener {
             promptGoogleSignInOptions()
         }
+
+        mBinding.btnGoogleLogout.setOnClickListener {
+            GoogleSignInUtil.signOutFromGoogle(this){
+                if(it){
+                    hideGoogleLogoutButton()
+                } else {
+                    showGoogleLogoutButton()
+                }
+            }
+        }
     }
 
     /**
@@ -157,7 +176,7 @@ class MainActivity : AppCompatActivity() {
                 val user = User(
                     fullName = googleSignInAccount.displayName,
                     email = googleSignInAccount.email,
-                    image = googleSignInAccount.photoUrl.toString(),
+                    image = googleSignInAccount.photoUrl?.toString(),
                     id = googleSignInAccount.id
                 )
 
@@ -176,7 +195,7 @@ class MainActivity : AppCompatActivity() {
     private fun navigateToProfile(user: User, loginType: LoginType) {
         val intent = Intent(this@MainActivity, ProfileActivity::class.java).apply {
             putExtra(USER_PROFILE_KEY,user)
-            putExtra(LOGIN_TYPE_KEY,loginType)
+            putExtra(LOGIN_TYPE_KEY,loginType.name)
         }
         startActivity(intent)
     }
@@ -186,6 +205,18 @@ class MainActivity : AppCompatActivity() {
         mBinding.twitterLoginButton.onActivityResult(requestCode, resultCode, data)
     }
 
+    /**
+     * Helper functions for showing or hiding Google sign and sign out button.
+     */
+    private fun hideGoogleLogoutButton() {
+        mBinding.btnGoogleLogout.isVisible = false
+        mBinding.googleSignInButton.isVisible = true
+    }
+
+    private fun showGoogleLogoutButton() {
+        mBinding.btnGoogleLogout.isVisible = true
+        mBinding.googleSignInButton.isVisible = false
+    }
     companion object {
         const val EMAIL = "email"
         const val TAG = "MainActivity"

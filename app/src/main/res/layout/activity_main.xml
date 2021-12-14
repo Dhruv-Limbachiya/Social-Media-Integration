@@ -12,11 +12,27 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:buttonSize="wide"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="@id/fb_login_button"
         app:layout_constraintEnd_toEndOf="@id/fb_login_button"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
          />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_google_logout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="Click to Logout"
+        android:textSize="18sp"
+        android:background="@color/white"
+        android:textAllCaps="false"
+        android:layout_marginBottom="16dp"
+        android:drawableStart="@drawable/google"
+        app:layout_constraintStart_toStartOf="@id/fb_login_button"
+        app:layout_constraintEnd_toEndOf="@id/fb_login_button"
+        app:layout_constraintBottom_toTopOf="@id/fb_login_button"/>
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/fb_login_button"

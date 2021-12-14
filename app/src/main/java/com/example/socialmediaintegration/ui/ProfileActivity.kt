@@ -5,10 +5,17 @@ import android.os.Bundle
 import com.bumptech.glide.Glide
 import com.example.socialmediaintegration.databinding.ActivityProfileBinding
  import com.example.socialmediaintegration.model.User
+import com.example.socialmediaintegration.util.GoogleSignInUtil
+import com.example.socialmediaintegration.util.LoginType
+import com.example.socialmediaintegration.util.LoginType.GOOGLE
+import com.example.socialmediaintegration.util.LoginType.TWITTER
+import com.example.socialmediaintegration.util.LoginType.FACEBOOK
+import com.google.android.material.snackbar.Snackbar
 
 class ProfileActivity : AppCompatActivity() {
 
     private lateinit var mBinding: ActivityProfileBinding
+    private var loginType: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,6 +23,30 @@ class ProfileActivity : AppCompatActivity() {
         setContentView(mBinding.root)
 
         displayProfileDetails()
+
+        mBinding.btnLogout.setOnClickListener {
+            loginType?.let {
+                when(loginType) {
+                    GOOGLE.name -> {
+                        GoogleSignInUtil.signOutFromGoogle(this) {
+                            if(it) {
+                                finish()
+                            } else {
+                                Snackbar.make(mBinding.root,"Unable to sign out",Snackbar.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+
+                    FACEBOOK.name -> {
+
+                    }
+
+                    TWITTER.name -> {
+
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -25,6 +56,7 @@ class ProfileActivity : AppCompatActivity() {
         val profileBundle = intent
 
         val user = profileBundle?.getParcelableExtra<User>(MainActivity.USER_PROFILE_KEY)
+        loginType = profileBundle?.getStringExtra(MainActivity.LOGIN_TYPE_KEY)
 
         user?.let {
             it.id?.let { id ->
